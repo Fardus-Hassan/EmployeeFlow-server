@@ -42,14 +42,36 @@ async function run() {
 
 
     app.post('/users', async (req, res) => {
-        const user = req.body;
-        const result = await UserCollection.insertOne(user);
-        res.json(result);
-    })
-
+      const user = req.body;
+      const email = user.email;
+      
+      try {
+          // Check if a user with the same email already exists
+          const existingUser = await UserCollection.findOne({ email: email });
+  
+          if (existingUser) {
+              // Email already exists, return an error response
+              res.json({ message: 'Email already in use' });
+          } else {
+              // Email does not exist, proceed to insert the new user
+              const result = await UserCollection.insertOne(user);
+              res.json(result);
+          }
+      } catch (error) {
+          // Handle any errors that occurred during the process
+          res.json({ message: 'An error occurred', error: error.message });
+      }
+  });
+  
     app.get('/users', async (req, res) => {
         const users = await UserCollection.find({}).toArray();
         res.json(users);
+    })
+
+    app.get('/users/:email', async (req, res) => {
+        const email = req.params.email;
+        const user = await UserCollection.findOne({ email: email });
+        res.json(user);
     })
 
 
