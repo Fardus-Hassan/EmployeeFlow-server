@@ -2,7 +2,6 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const moment = require('moment'); // Import moment.js for date manipulation
 require('dotenv').config()
 const port = process.env.PORT || 3000
 
@@ -83,6 +82,20 @@ async function run() {
       res.json(users);
     })
 
+    app.patch('/users/:id', async (req, res) => {
+      const id = req.params.id;
+      const user = req.body
+
+  
+      try {
+          const result = await UserCollection.updateOne({ _id: new ObjectId(id) },{ $set: { verify: user.verify } });
+          res.json(result);
+      } catch (error) {
+          console.error('Failed to update verification status:', error);
+          res.status(500).json({ error: 'Failed to update verification status' });
+      }
+  });
+
     app.get('/users/:email', async (req, res) => {
       const email = req.params.email;
       const user = await UserCollection.findOne({ email: email });
@@ -99,29 +112,29 @@ async function run() {
     })
 
     app.get('/employeeWorkSheet', async (req, res) => {
-      try {
-        const employeeWorkSheet = await EmployeeWorkSheet.find({})
-          .sort({ date: -1 }) // Sort by date in descending order (latest date on top)
-          .toArray();
-    
-        // Convert date format from dd/MM/yyyy to yyyy-MM-dd for proper sorting
-        const sortedEmployeeWorkSheet = employeeWorkSheet.map(entry => ({
-          ...entry,
-          date: moment(entry.date, 'DD/MM/YYYY').format('DD/MM/YYYY')
-        }));
-    
-        res.json(sortedEmployeeWorkSheet);
-      } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch employee worksheets' });
-      }
-    });
+      const employeeWorkSheet = await EmployeeWorkSheet.find({}).toArray();
+      res.json(employeeWorkSheet);
+    })
 
+    app.get("/employeeWorkSheet/:email", async (req, res) => {
+      const email = req.params.email;
+      const employeeWorkSheet = await EmployeeWorkSheet.find({employeeEmail: email}).toArray();
+      res.json(employeeWorkSheet);
+    })
 
     app.delete('/employeeWorkSheet/:id', async (req, res) => {
       const id = req.params.id;
       const result = await EmployeeWorkSheet.deleteOne({ _id: new ObjectId(id) });
       res.json(result);
     })
+
+    // single employee detail
+
+    // app.get('/employeeWorkSheet/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const employeeWorkSheet = await EmployeeWorkSheet.findOne({ _id: new ObjectId(id) });
+    //   res.json(employeeWorkSheet);
+    // })
 
 
 
