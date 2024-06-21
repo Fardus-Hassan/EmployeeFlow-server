@@ -193,7 +193,7 @@ async function run() {
     app.get('/payment-history', async (req, res) => {
       const result = await PaymentHistory.find({}).toArray();
       res.json(result);
-    })
+    });
     
     app.get('/payment-history/:email', async (req, res) => {
       const email = req.params.email;
