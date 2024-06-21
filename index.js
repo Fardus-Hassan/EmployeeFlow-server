@@ -146,7 +146,7 @@ async function run() {
       const email = req.params.email;
       const employeeWorkSheet = await EmployeeWorkSheet.find({ employeeEmail: email }).toArray();
       res.json(employeeWorkSheet);
-    })
+    });
 
     app.delete('/employeeWorkSheet/:id', async (req, res) => {
       const id = req.params.id;
