@@ -186,7 +186,7 @@ async function run() {
         console.error(error);
         res.status(500).send('Error to Make HR');
       }
-    })
+    });
 
     //payment
 
