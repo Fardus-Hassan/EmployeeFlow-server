@@ -199,7 +199,7 @@ async function run() {
       const email = req.params.email;
       const result = await PaymentHistory.find({ email: email }).toArray();
       res.json(result);
-    })
+    });
 
     app.post('/payment-history', async (req, res) => {
       const payment = req.body;
@@ -224,7 +224,7 @@ async function run() {
           enabled: true,
         },
       
-      })
+      });
 
 
       res.send({clientSecret : client_secret})
