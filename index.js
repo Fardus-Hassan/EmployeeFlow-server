@@ -205,7 +205,7 @@ async function run() {
       const payment = req.body;
       const result = await PaymentHistory.insertOne(payment);
       res.json(result);
-    })
+    });
 
  
 
