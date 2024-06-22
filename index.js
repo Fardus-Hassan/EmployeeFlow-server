@@ -11,6 +11,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
+      "https://employee-flow.web.app"
     ],
     credentials: true,
   })
@@ -33,7 +34,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
 
 
@@ -192,7 +193,7 @@ async function run() {
       const result = await PaymentHistory.find({}).toArray();
       res.json(result);
     });
-    
+
     app.get('/payment-history/:email', async (req, res) => {
       const email = req.params.email;
       const result = await PaymentHistory.find({ email: email }).toArray();
@@ -205,34 +206,42 @@ async function run() {
       res.json(result);
     });
 
- 
+
 
     app.post('/create-payment-intent', async (req, res) => {
       const payment = req.body.price;
-      const amount = parseFloat(payment)*100;
-      if(!payment || amount < 1){
-        return 
+      const amount = parseFloat(payment) * 100;
+      if (!payment || amount < 1) {
+        return
       }
 
-      const {client_secret} = await stripe.paymentIntents.create({
+      const { client_secret } = await stripe.paymentIntents.create({
         amount: amount,
         currency: "usd",
         // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
         automatic_payment_methods: {
           enabled: true,
         },
-      
+
       })
 
 
-      res.send({clientSecret : client_secret})
+      res.send({ clientSecret: client_secret })
 
+    })
+
+
+    // contact
+
+    app.get('/contact', async (req, res) => {
+      const contact = await Contact.find({}).toArray();
+      res.json(contact);
     })
 
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
