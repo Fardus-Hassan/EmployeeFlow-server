@@ -4,7 +4,7 @@ const cors = require('cors')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const stripe = require("stripe")(process.env.DB_STRIPE_SECRET);
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 4000
 
 app.use(
   cors({
@@ -176,8 +176,6 @@ async function run() {
       const email = req.params.email;
       const { role } = req.body
 
-      console.log(email, role);
-
       try {
         const makeHR = await UserCollection.updateOne({ email: email }, { $set: { role: role } }, { $unset: true });
 
@@ -224,7 +222,7 @@ async function run() {
           enabled: true,
         },
       
-      });
+      })
 
 
       res.send({clientSecret : client_secret})
